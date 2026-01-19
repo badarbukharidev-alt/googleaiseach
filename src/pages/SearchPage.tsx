@@ -198,34 +198,63 @@ const SearchPage = () => {
                       rel="noopener noreferrer"
                       className="group relative rounded-xl overflow-hidden bg-muted aspect-video hover:ring-2 hover:ring-primary transition-all"
                     >
+                      {/* Thumbnail - visible by default, hidden on hover if clip exists */}
                       {video.thumbnail ? (
                         <img 
                           src={video.thumbnail} 
                           alt={video.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className={`w-full h-full object-cover transition-all duration-300 ${
+                            video.clip ? 'group-hover:opacity-0' : 'group-hover:scale-105'
+                          }`}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = '/placeholder.svg';
                           }}
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-secondary">
+                        <div className={`w-full h-full flex items-center justify-center bg-secondary ${
+                          video.clip ? 'group-hover:opacity-0' : ''
+                        }`}>
                           <Play className="w-8 h-8 text-muted-foreground" />
                         </div>
                       )}
-                      {/* Play overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
-                          <Play className="w-5 h-5 text-foreground fill-current" />
+                      
+                      {/* Video clip preview - shown on hover */}
+                      {video.clip && (
+                        <video
+                          src={video.clip}
+                          className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          muted
+                          loop
+                          playsInline
+                          onMouseEnter={(e) => {
+                            const videoEl = e.currentTarget;
+                            videoEl.currentTime = 0;
+                            videoEl.play().catch(() => {});
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.pause();
+                          }}
+                        />
+                      )}
+                      
+                      {/* Play overlay - only show if no clip */}
+                      {!video.clip && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                            <Play className="w-5 h-5 text-foreground fill-current" />
+                          </div>
                         </div>
-                      </div>
+                      )}
+                      
                       {/* Duration badge */}
                       {video.duration && (
-                        <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
+                        <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded z-10 group-hover:opacity-0 transition-opacity">
                           {video.duration}
                         </span>
                       )}
+                      
                       {/* Title overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 z-10 group-hover:opacity-0 transition-opacity">
                         <p className="text-white text-xs line-clamp-2 font-medium">{video.title}</p>
                         {video.channel && (
                           <p className="text-white/70 text-xs truncate">{video.channel}</p>
