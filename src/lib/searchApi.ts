@@ -18,6 +18,14 @@ export interface GoogleSearchResult {
     source: string;
     thumbnail: string | null;
   }[];
+  short_videos: {
+    title: string;
+    link: string;
+    thumbnail: string | null;
+    duration: string | null;
+    channel: string | null;
+    source: string;
+  }[];
   error?: string;
 }
 
@@ -79,6 +87,7 @@ export async function searchGoogle(query: string): Promise<GoogleSearchResult> {
         success: false,
         query,
         results: [],
+        short_videos: [],
         error: data.error || 'Search failed',
       };
     }
@@ -90,6 +99,7 @@ export async function searchGoogle(query: string): Promise<GoogleSearchResult> {
       success: false,
       query,
       results: [],
+      short_videos: [],
       error: 'Failed to connect to search service',
     };
   }

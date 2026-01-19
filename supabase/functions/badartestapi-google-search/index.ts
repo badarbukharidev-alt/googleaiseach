@@ -92,14 +92,42 @@ serve(async (req) => {
       }
     }
 
+    // Extract short videos
+    const shortVideos: { title: string; link: string; thumbnail: string | null; duration: string | null; channel: string | null; source: string }[] = [];
+    
+    const rawVideos = data.short_video_results || data.video_results || data.videos || [];
+    
+    if (Array.isArray(rawVideos)) {
+      for (const video of rawVideos.slice(0, 6)) {
+        const title = video.title || '';
+        const link = video.link || video.url || '';
+        const thumbnail = video.thumbnail || null;
+        const duration = video.duration || null;
+        const channel = video.channel || null;
+        const source = video.source || 'Video';
+
+        if (title && link) {
+          shortVideos.push({
+            title: String(title).trim(),
+            link: String(link).trim(),
+            thumbnail: thumbnail ? String(thumbnail).trim() : null,
+            duration: duration ? String(duration).trim() : null,
+            channel: channel ? String(channel).trim() : null,
+            source: String(source).trim()
+          });
+        }
+      }
+    }
+
     // Return clean response
     const cleanResponse = {
       success: true,
       query: sanitizedQuery,
-      results: results
+      results: results,
+      short_videos: shortVideos
     };
 
-    console.log('Google Search successful, found', results.length, 'results');
+    console.log('Google Search successful, found', results.length, 'results and', shortVideos.length, 'videos');
 
     return new Response(
       JSON.stringify(cleanResponse),

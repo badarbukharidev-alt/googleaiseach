@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Sparkles, Globe, Loader2, ExternalLink, AlertCircle } from 'lucide-react';
+import { Search, Sparkles, Globe, Loader2, ExternalLink, AlertCircle, Play } from 'lucide-react';
 import { searchAI, searchGoogle, type AISearchResult, type GoogleSearchResult } from '@/lib/searchApi';
 
 type SearchType = 'ai' | 'google';
@@ -181,8 +181,64 @@ const SearchPage = () => {
 
         {/* Google Results */}
         {googleResult && !isLoading && (
-          <div className="space-y-4 animate-slide-up">
-            {googleResult.results.length === 0 ? (
+          <div className="space-y-6 animate-slide-up">
+            {/* Short Videos Section */}
+            {googleResult.short_videos && googleResult.short_videos.length > 0 && (
+              <div className="result-card">
+                <div className="flex items-center gap-2 mb-4">
+                  <Play className="w-5 h-5 text-primary" />
+                  <h3 className="font-display font-semibold text-foreground">Short Videos</h3>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {googleResult.short_videos.map((video, index) => (
+                    <a
+                      key={index}
+                      href={video.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative rounded-xl overflow-hidden bg-muted aspect-video hover:ring-2 hover:ring-primary transition-all"
+                    >
+                      {video.thumbnail ? (
+                        <img 
+                          src={video.thumbnail} 
+                          alt={video.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/placeholder.svg';
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-secondary">
+                          <Play className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                      )}
+                      {/* Play overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                          <Play className="w-5 h-5 text-foreground fill-current" />
+                        </div>
+                      </div>
+                      {/* Duration badge */}
+                      {video.duration && (
+                        <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">
+                          {video.duration}
+                        </span>
+                      )}
+                      {/* Title overlay */}
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                        <p className="text-white text-xs line-clamp-2 font-medium">{video.title}</p>
+                        {video.channel && (
+                          <p className="text-white/70 text-xs truncate">{video.channel}</p>
+                        )}
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Web Results */}
+            {googleResult.results.length === 0 && (!googleResult.short_videos || googleResult.short_videos.length === 0) ? (
               <div className="result-card text-center text-muted-foreground">
                 No results found for "{googleResult.query}"
               </div>
