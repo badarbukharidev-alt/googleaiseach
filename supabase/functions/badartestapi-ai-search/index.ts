@@ -33,12 +33,8 @@ serve(async (req) => {
     console.log('AI Search query:', sanitizedQuery);
 
     // Call Felo AI API
-    const response = await fetch('https://yabes-api.pages.dev/api/ai/chat/felo-ai', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ query: sanitizedQuery }),
+    const response = await fetch(`https://yabes-api.pages.dev/api/ai/chat/felo-ai?query=${encodeURIComponent(sanitizedQuery)}`, {
+      method: 'GET',
     });
 
     if (!response.ok) {
