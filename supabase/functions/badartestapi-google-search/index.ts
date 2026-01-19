@@ -58,7 +58,7 @@ serve(async (req) => {
     const data = await response.json();
     
     // Extract only clean result fields
-    const results: { title: string; link: string; snippet: string; source: string }[] = [];
+    const results: { title: string; link: string; snippet: string; source: string; thumbnail: string | null }[] = [];
     
     const rawResults = data.results || data.organic_results || data.items || data.data || [];
     
@@ -67,6 +67,7 @@ serve(async (req) => {
         const title = item.title || item.name || '';
         const link = item.link || item.url || item.href || '';
         const snippet = item.snippet || item.description || item.text || '';
+        const thumbnail = item.thumbnail || item.image || item.favicon || null;
         
         // Extract domain as source
         let source = 'Website';
@@ -84,7 +85,8 @@ serve(async (req) => {
             title: String(title).trim(),
             link: String(link).trim(),
             snippet: String(snippet).trim(),
-            source: source
+            source: source,
+            thumbnail: thumbnail ? String(thumbnail).trim() : null
           });
         }
       }
