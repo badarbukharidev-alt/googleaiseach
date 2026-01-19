@@ -22,6 +22,7 @@ export interface GoogleSearchResult {
     title: string;
     link: string;
     thumbnail: string | null;
+    clip: string | null;
     duration: string | null;
     channel: string | null;
     source: string;
