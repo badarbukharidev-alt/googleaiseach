@@ -16,6 +16,7 @@ export interface GoogleSearchResult {
     link: string;
     snippet: string;
     source: string;
+    thumbnail: string | null;
   }[];
   error?: string;
 }

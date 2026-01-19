@@ -193,7 +193,17 @@ const SearchPage = () => {
                   className="result-card"
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-4">
+                    {result.thumbnail && (
+                      <img 
+                        src={result.thumbnail} 
+                        alt={result.title}
+                        className="w-16 h-16 rounded-lg object-cover flex-shrink-0 bg-muted"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    )}
                     <div className="flex-1 min-w-0">
                       <a
                         href={result.link}
